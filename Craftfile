@@ -13,11 +13,22 @@ if path.isfile(path.local('src/sz_api.c')):
     external_libs = [],
   )
 
+  szip_no_warnings = Framework(
+    frameworks = [szip],
+    msvc_compile_additional_flags = [
+      '/wd4244', # conversion, possible loss of data
+      '/wd4131', # uses old style declarator
+      '/wd4127', # conditional expression is constant
+      '/wd4018', # signed/unsigned mismatch
+      '/wd4100', # unreferenced formal parameter
+    ],
+  )
+
   lib = ar.staticlib(
     output = 'szip',
     inputs = cc.compile(
       sources = path.glob('src/*.c'),
-      frameworks = [szip],
+      frameworks = [szip_no_warnings],
     )
   )
 
@@ -27,7 +38,7 @@ if path.isfile(path.local('src/sz_api.c')):
     output = 'test',
     inputs = cc.compile(
       sources = path.glob('test/*.c'),
-      frameworks = [szip],
+      frameworks = [szip_no_warnings],
       target_name = 'test_obj',
       explicit = True,
     ),
